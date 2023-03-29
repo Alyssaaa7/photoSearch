@@ -9,6 +9,7 @@ phases:
       - zip -r function.zip ./*
       - aws s3 cp function.zip s3://bucketp-pipeline/function.zip
       - cd .
+      - cd .
       - pwd
       - ls
 
