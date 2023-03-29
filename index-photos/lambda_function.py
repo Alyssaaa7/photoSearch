@@ -21,6 +21,7 @@ def lambda_handler(event, context):
 
     bucket = event["Records"][0]["s3"]["bucket"]["name"]
     print(event)
+    print(event)
     key = urllib.parse.unquote_plus(event["Records"][0]['s3']['object']['key'], encoding='utf-8')
     print(key)
     custom_labels = s3.head_object(Bucket=bucket, Key=key)["Metadata"]["customlabels"]
