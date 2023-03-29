@@ -28,7 +28,7 @@ def lambda_handler(event, context):
     #decode base64
     response = s3.get_object(Bucket=bucket, Key=key)
     content = response['Body'].read().decode("utf-8")
-    print("hiiiii")
+    print("1111")
     
     image = base64.b64decode(content)
     
