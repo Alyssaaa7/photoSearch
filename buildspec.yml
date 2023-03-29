@@ -20,14 +20,14 @@ phases:
 
   post_build:
     commands:
-     - aws lambda update-function-code --function-name index-photos --s3-bucket bucketp-pipeline --s3-key function.zip --publish
-     - aws lambda update-function-code --function-name search-photos --s3-bucket bucketp-pipeline --s3-key function1.zip --publish
-
-
+     - aws s3 cp s3://bucketp-pipeline/function.zip function.zip
+     - aws s3 cp s3://bucketp-pipeline/function1.zip function1.zip
+     - aws lambda update-function-code --function-name index-photos --zip-file fileb://function.zip --publish
+     - aws lambda update-function-code --function-name search-photos --zip-file fileb://function1.zip --publish
 
 artifacts:
   type: zip
   files:
-    - '**/*'
-
+    - function.zip
+    - function1.zip
 

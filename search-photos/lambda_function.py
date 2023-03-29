@@ -33,7 +33,7 @@ def lambda_handler(event, context):
             text=msg_from_user)
     print("response")
     print(response)
-    print("function1")
+    print("hi")
     keywords = []
     if 'interpretations' in response and len(response['interpretations']) > 0:
         interpretation = response['interpretations'][0]
