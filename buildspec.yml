@@ -28,6 +28,6 @@ phases:
 artifacts:
   type: zip
   files:
-    - ../index-photos/function.zip
-    - ../search-photo/function1.zip
+    - ./index-photos/function.zip
+    - ./search-photo/function1.zip
 
