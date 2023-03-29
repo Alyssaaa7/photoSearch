@@ -6,7 +6,7 @@ Resources:
     Properties:
       Description: LambdaFunction1
       Handler: index-photos.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.7
       CodeUri: ./index-photos
       MemorySize: 128
       Timeout: 30

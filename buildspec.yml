@@ -2,7 +2,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      python: 3.7
+      python: 3.9
     commands:
       - aws cloudformation package --template-file template.yaml --s3-bucket bucketp-pipeline --output-template-file outputsamtemplate.yml
       - aws lambda update-function-code --function-name index-photos --zip-file fileb://deployment.zip
