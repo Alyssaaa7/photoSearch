@@ -6,14 +6,14 @@ from opensearchpy import OpenSearch, RequestsHttpConnection
 from requests_aws4auth import AWS4Auth
 import logging
 import datetime
-
+import base64
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 s3 = boto3.client('s3')
 rekognition = boto3.client('rekognition')
 
-host = "search-photos-42emiq2wr7v5mrf7fwotrlkx3i.us-east-1.es.amazonaws.com"
+host = "https:/search-photoscf-x7q7bxq5vlmcwszy5nsdbvd3g4.us-east-1.es.amazonaws.com"
 region = "us-east-1"
 
 def lambda_handler(event, context):
@@ -21,17 +21,24 @@ def lambda_handler(event, context):
 
     bucket = event["Records"][0]["s3"]["bucket"]["name"]
     key = urllib.parse.unquote_plus(event["Records"][0]['s3']['object']['key'], encoding='utf-8')
+    print(key)
+    custom_labels = s3.head_object(Bucket=bucket, Key=key)["Metadata"]["customlabels"]
+    print(custom_labels)
+    #decode base64
+    response = s3.get_object(Bucket=bucket, Key=key)
+    content = response['Body'].read().decode("utf-8")
     
-    metadata = s3.head_object(Bucket=bucket, Key=key)['Metadata']
-    custom_labels = metadata.get('x-amz-meta-customLabels',[])
-    print("This is customLabels", custom_labels)
+    image = base64.b64decode(content)
+    
+    #delete original photos and upload new one in s3
+    response=s3.delete_object(Bucket=bucket,Key=key)
+    response=s3.put_object(Bucket=bucket, Body=image, Key=key,ContentType='image/jpg')
     
     # use AWS rekognition to get labels
-    labels = get_labels(bucket, key)
+    labels = get_labels(image)
     
     if custom_labels:
-        custom_labels = json.loads(custom_labels)
-        labels.extend(custom_labels)
+        labels.append(custom_labels)
     
     object_metadata = s3.head_object(Bucket=bucket, Key=key)['Metadata']
     created_timestamp = object_metadata.get('creation-date')
@@ -69,8 +76,8 @@ def lambda_handler(event, context):
         print('Insert Failed OS')
         
 
-def get_labels(bucket, key):
-    response = rekognition.detect_labels(Image={'S3Object':{'Bucket':bucket,'Name':key}}, MaxLabels=10, MinConfidence=90)
+def get_labels(image):
+    response = rekognition.detect_labels(Image={'Bytes':image}, MaxLabels=10, MinConfidence=90)
     print(response["Labels"])
     labels = [label['Name'] for label in response['Labels']]
     print(labels)
