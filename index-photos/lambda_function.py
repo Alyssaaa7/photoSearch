@@ -18,6 +18,7 @@ region = "us-east-1"
 
 def lambda_handler(event, context):
     print(event)
+    print(event)
 
     bucket = event["Records"][0]["s3"]["bucket"]["name"]
     key = urllib.parse.unquote_plus(event["Records"][0]['s3']['object']['key'], encoding='utf-8')
