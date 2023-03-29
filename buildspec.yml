@@ -3,6 +3,8 @@ phases:
   install:
     runtime-versions:
       python: 3.9
+    commands:
+      -aws cloudformation package --template-file template.yaml --s3-bucket bucketp-pipeline --output-template-file outputsamtemplate.yml
   build:
     commands:
       - cd ./index-photos
@@ -10,8 +12,6 @@ phases:
       - zip -r function.zip ./*
       - aws s3 cp function.zip s3://bucketp-pipeline/function.zip
 
-
-      - aws cloudformation package --template-file ./template.yaml --s3-bucket bucketp-pipeline --output-template-file outputsamtemplate.yml
   post_build:
     commands:
       - echo "Updating lambda Function...
