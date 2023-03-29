@@ -1,0 +1,11 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - aws cloudformation package --template-file template.yaml --s3-bucket bucketp-pipeline --output-template-file outputsamtemplate.yml
+artifacts:
+  type: zip
+  files:
+    - template.yaml
+    - outputsamtemplate.yml
+    
