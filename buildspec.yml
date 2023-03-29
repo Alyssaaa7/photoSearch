@@ -6,14 +6,12 @@ phases:
   build:
     commands:
       - cd ./index-photos
-#      - npm install
       - zip -r function.zip ./*
       - aws s3 cp function.zip s3://bucketp-pipeline/function.zip
-#      - aws cloudformation package --template-file template.yaml --s3-bucket bucketp-pipeline --output-template-file outputsamtemplate.yml
+
 
   post_build:
     commands:
-      - echo "Updating lambda Function...
 #      - aws lambda update-function-code function-name index-photos --s3-bucket bucketp-pipeline --s3-key function.zip --publish
 
       #- aws lambda update-function-code --function-name index-photos --zip-file fileb://deployment_package.zip
