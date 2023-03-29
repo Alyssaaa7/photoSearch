@@ -10,7 +10,7 @@ phases:
       - aws s3 cp function.zip s3://bucketp-pipeline/function.zip
 
 
-  deploy:
+  post_build:
     commands:
      - aws lambda update-function-code --function-name index-photos --s3-bucket bucketp-pipeline --s3-key function.zip --publish
 
