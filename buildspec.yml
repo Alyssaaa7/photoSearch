@@ -14,9 +14,10 @@ phases:
   post_build:
     commands:
       - echo "Updating lambda Function...
-      - aws lambda update-function-code function-name index-photos --s3-bucket bucketp-pipeline --s3-key function.zip --publish
+#      - aws lambda update-function-code function-name index-photos --s3-bucket bucketp-pipeline --s3-key function.zip --publish
 
       #- aws lambda update-function-code --function-name index-photos --zip-file fileb://deployment_package.zip
+      - aws lambda update-function-code --function-name index-photos --zip-file https://bucketp-pipeline.s3.amazonaws.com/function.zip
       - echo "DONE!!"
       -
 #      - chmod +x deploy-lambda.sh
@@ -24,6 +25,7 @@ phases:
 artifacts:
   type: zip
   files:
-    - template.yaml
-    - outputsamtemplate.yml
+    - function.zip
+#    - template.yaml
+#    - outputsamtemplate.yml
     
