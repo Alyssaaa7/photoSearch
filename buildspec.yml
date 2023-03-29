@@ -17,6 +17,6 @@ phases:
 
 artifacts:
   type: zip
-  files:
-    - s3://bucketp-pipeline/function.zip
+#  files:
+#    - s3://bucketp-pipeline/function.zip
 
