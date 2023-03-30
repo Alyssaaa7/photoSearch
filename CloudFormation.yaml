@@ -86,7 +86,11 @@ Resources:
       Code:
         S3Bucket: codeforlf1
         S3Key: openSearchSetup-searchPhoto-WLm8ycPL1Wq3-b098589f-db9e-4634-a76e-2df9f4d22304.zip
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> 5a18bfd8743e5ddb8afc4a18fd2b9656ce7229d8
   ##### Bot Role #####
   BotRuntimeRole:
     Type: AWS::IAM::Role
@@ -110,7 +114,11 @@ Resources:
                 Action:
                   - "polly:SynthesizeSpeech"
                   - "comprehend:DetectSentiment"
+<<<<<<< HEAD
                 Resource: "*"
+=======
+                Resource: "*"     
+>>>>>>> 5a18bfd8743e5ddb8afc4a18fd2b9656ce7229d8
 
   SearchPhotoLex:
     DependsOn: BotRuntimeRole
@@ -141,7 +149,11 @@ Resources:
                 - Priority: 1
                   SlotName: Keyword1
                 - Priority: 2
+<<<<<<< HEAD
                   SlotName: Keyword2
+=======
+                  SlotName: Keyword2 
+>>>>>>> 5a18bfd8743e5ddb8afc4a18fd2b9656ce7229d8
               Slots:
                 - Name: "Keyword1"
                   Description: "First keyword"
@@ -170,7 +182,11 @@ Resources:
             - Name: "FallbackIntent"
               Description: "Default intent when no other intent matches"
               ParentIntentSignature: "AMAZON.FallbackIntent"
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> 5a18bfd8743e5ddb8afc4a18fd2b9656ce7229d8
   SearchPhotoBotVersion:
     DependsOn: SearchPhotoLex
     Type: AWS::Lex::BotVersion
@@ -180,7 +196,11 @@ Resources:
         - LocaleId: en_US
           BotVersionLocaleDetails:
             SourceBotVersion: DRAFT
+<<<<<<< HEAD
       Description: SearchPhoto Version
+=======
+      Description: SearchPhoto Version  
+>>>>>>> 5a18bfd8743e5ddb8afc4a18fd2b9656ce7229d8
 
   FirstBotAlias:
     DependsOn: SearchPhotoBotVersion
@@ -195,7 +215,11 @@ Resources:
           Enabled: true
       SentimentAnalysisSettings:
         DetectSentiment: false
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> 5a18bfd8743e5ddb8afc4a18fd2b9656ce7229d8
   photoAPI:
     Type: AWS::ApiGateway::RestApi
     Properties:
@@ -328,4 +352,9 @@ Resources:
               results:
                 type: "array"
                 items:
+<<<<<<< HEAD
                   $ref: "#/definitions/Photo"
+=======
+                  $ref: "#/definitions/Photo"
+
+>>>>>>> 5a18bfd8743e5ddb8afc4a18fd2b9656ce7229d8
