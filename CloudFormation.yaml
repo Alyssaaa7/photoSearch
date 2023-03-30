@@ -36,7 +36,7 @@ Resources:
               AWS: 'arn:aws:iam::857213095760:user/opensearch_user'
             Action: "es:*"
             Resource: !Sub 'arn:aws:es:us-east-1:857213095760:domain/photoscf/*'
-  
+
   S3Bucket1:
     Type: 'AWS::S3::Bucket'
     Properties:
@@ -57,7 +57,7 @@ Resources:
         LambdaConfigurations:
           - Event: s3:ObjectCreated:Put
             Function: !GetAtt indexPhoto.Arn
-  
+
   S3Permission:
     Type: AWS::Lambda::Permission
     Properties:
@@ -66,7 +66,7 @@ Resources:
       Principal: s3.amazonaws.com
       SourceAccount: '857213095760'
       SourceArn: "arn:aws:s3:::hw2bucket2fuxy"
-  
+
   indexPhoto:
     Type: AWS::Lambda::Function
     Properties:
@@ -75,7 +75,7 @@ Resources:
       Handler: lambda_function.lambda_handler
       Code:
         S3Bucket: codeforlf1
-        S3Key: index-photos-947cf284-93a0-4792-9b67-b3b33d5b3d32.zip
+        S3Key: openSearchSetup-indexPhoto-itIfYVCUDWVe-a0203734-59df-4936-9190-4375a89be741.zip
 
   searchPhoto:
     Type: 'AWS::Lambda::Function'
@@ -85,8 +85,117 @@ Resources:
       Handler: lambda_function.lambda_handler
       Code:
         S3Bucket: codeforlf1
-        S3Key: search-photos-96d76cee-6d49-4fcd-b04b-8ad10c96bf58.zip
-  
+        S3Key: openSearchSetup-searchPhoto-WLm8ycPL1Wq3-b098589f-db9e-4634-a76e-2df9f4d22304.zip
+
+  ##### Bot Role #####
+  BotRuntimeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lexv2.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: LexRuntimeRolePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "polly:SynthesizeSpeech"
+                  - "comprehend:DetectSentiment"
+                Resource: "*"
+
+  SearchPhotoLex:
+    DependsOn: BotRuntimeRole
+    Type: AWS::Lex::Bot
+    Properties:
+      Name: "SearchPhotoLexBot"
+      RoleArn: !GetAtt BotRuntimeRole.Arn
+      DataPrivacy:
+        ChildDirected: false
+      IdleSessionTTLInSeconds: 300
+      Description: "How to search photo with bot"
+      AutoBuildBotLocales: false
+      BotLocales:
+        - LocaleId: "en_US"
+          Description: "Search a photo bot Locale"
+          NluConfidenceThreshold: 0.40
+          Intents:
+            - Name: "SearchIntent"
+              Description: "Intent to search photos"
+              SampleUtterances:
+                - Utterance: "{Keyword1}"
+                - Utterance: "show me some photos with {Keyword1}"
+                - Utterance: "I want some photos with {Keyword1}"
+                - Utterance: "{Keyword1} and {Keyword2}"
+                - Utterance: "show me photos with {Keyword1} and {Keyword2}"
+                - Utterance: "I want some photos with {Keyword1} and {Keyword2}"
+              SlotPriorities:
+                - Priority: 1
+                  SlotName: Keyword1
+                - Priority: 2
+                  SlotName: Keyword2
+              Slots:
+                - Name: "Keyword1"
+                  Description: "First keyword"
+                  SlotTypeName: "AMAZON.AlphaNumeric"
+                  ValueElicitationSetting:
+                    SlotConstraint: "Required"
+                    PromptSpecification:
+                      MessageGroupsList:
+                        - Message:
+                            PlainTextMessage:
+                              Value: "-"
+                      MaxRetries: 3
+                      AllowInterrupt: false
+                - Name: "Keyword2"
+                  Description: "Second keyword"
+                  SlotTypeName: "AMAZON.AlphaNumeric"
+                  ValueElicitationSetting:
+                    SlotConstraint: "Required"
+                    PromptSpecification:
+                      MessageGroupsList:
+                        - Message:
+                            PlainTextMessage:
+                              Value: "-"
+                      MaxRetries: 3
+                      AllowInterrupt: false
+            - Name: "FallbackIntent"
+              Description: "Default intent when no other intent matches"
+              ParentIntentSignature: "AMAZON.FallbackIntent"
+
+  SearchPhotoBotVersion:
+    DependsOn: SearchPhotoLex
+    Type: AWS::Lex::BotVersion
+    Properties:
+      BotId: !Ref SearchPhotoLex
+      BotVersionLocaleSpecification:
+        - LocaleId: en_US
+          BotVersionLocaleDetails:
+            SourceBotVersion: DRAFT
+      Description: SearchPhoto Version
+
+  FirstBotAlias:
+    DependsOn: SearchPhotoBotVersion
+    Type: AWS::Lex::BotAlias
+    Properties:
+      BotId: !Ref SearchPhotoLex
+      BotAliasName: "SearchPhotoAlias"
+      BotVersion: !GetAtt SearchPhotoBotVersion.BotVersion
+      BotAliasLocaleSettings:
+      - LocaleId: "en_US"
+        BotAliasLocaleSetting:
+          Enabled: true
+      SentimentAnalysisSettings:
+        DetectSentiment: false
+
   photoAPI:
     Type: AWS::ApiGateway::RestApi
     Properties:
@@ -220,7 +329,3 @@ Resources:
                 type: "array"
                 items:
                   $ref: "#/definitions/Photo"
-
-  
-  
-
