@@ -22,7 +22,7 @@ phases:
       - ls
       - cd ..
       - pwd
-      - aws s3 cp processed s3://hw2bucket1fuxy --recursive
+      - aws s3 cp processed/ s3://hw2bucket1fuxy --recursive
 
 artifacts:
   files:
