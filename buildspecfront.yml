@@ -1,0 +1,30 @@
+version: 0.2
+
+env:
+  variables:
+    PROCESSED_FILES_DIR: ""
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 12
+  pre_build:
+    commands:
+      - npm install
+      - mkdir processed
+      - pwd
+      - cp -R ./frontend/. processed/
+      # Add any additional commands to process files here, e.g.:
+
+  build:
+    commands:
+      # Add any additional build commands here
+  post_build:
+    commands:
+      - pwd
+      - ls
+      - aws s3 cp ./processed s3://hw2bucket1fuxy --recursive
+
+artifacts:
+  files:
+    - ./processed/**
