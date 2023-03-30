@@ -8,17 +8,12 @@ phases:
   install:
     runtime-versions:
       python: 3.9
-  pre_build:
-    commands:
-#      - npm install
-      - mkdir processed
-      - pwd
-      - cp -R ./frontend/. processed/
-      # Add any additional commands to process files here, e.g.:
 
   build:
     commands:
-      # Add any additional build commands here
+      - mkdir processed
+      - pwd
+      - cp -R ./frontend/. processed/
   post_build:
     commands:
       - pwd
